@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Otomatik Scroll Yöneticisi
+// @name         Otomatik Scroll Yöneticisi (v4.1 Ultimate Fix)
 // @namespace    @tanersb
-// @version      4.0
-// @description  Web sitelerinde otomatik kaydırma.
+// @version      4.1
+// @description  Web sitelerinde otomatik kaydırma. Çift panel ve Iframe sorunları kökten çözüldü.
 // @author       @tanersb
 // @match        *://*/*
 // @grant        none
@@ -11,13 +11,29 @@
 (function() {
     'use strict';
 
+
+    if (window.top !== window.self) return;
+
+
+    const OLD_ID = 'tm-autoscroll-widget-container-v4'; // Eski ID'ler
+    const OLD_CLASS = 'tm-autoscroll-widget'; // Olası eski classlar
+
+    const existingId = document.getElementById(OLD_ID);
+    if (existingId) existingId.remove();
+
+
+    const existingClasses = document.querySelectorAll('.tm-autoscroll-cleanup-target');
+    existingClasses.forEach(el => el.remove());
+
+    // --- AYARLAR ---
     const imzaMetni = "@tanersb";
     const baseSpeedMultiplier = 60;
     const widgetWidth = "55px";
 
     const baslangicGizli = true;
-    const DEBUG = false;
+    const DEBUG = true;
 
+    // --- DEĞİŞKENLER ---
     let animationFrameId = null;
     let intervalId = null;
     let countdownIntervalId = null;
@@ -110,14 +126,13 @@
              color: #fff;
         }
 
-        /* Yeni Timer Butonları İçin Stil */
         .tm-timer-btn-container {
             display: flex;
             flex-direction: row;
             gap: 4px;
             width: 100%;
             justify-content: center;
-            margin-top: 4px; /* Üstteki butonlarla arayı aç */
+            margin-top: 4px;
         }
 
         .tm-timer-btn {
@@ -125,9 +140,9 @@
             height: 24px;
             cursor: pointer;
             border: none;
-            border-radius: 8px; /* Daha yuvarlak köşeler */
+            border-radius: 8px;
             background: linear-gradient(145deg, #444, #2a2a2a);
-            color: #fb8c00; /* Turuncu renk */
+            color: #fb8c00;
             font-weight: bold;
             font-size: 14px;
             display: flex;
@@ -141,7 +156,10 @@
     `;
     document.head.appendChild(style);
 
+    // --- ARAYÜZ ---
     const container = document.createElement('div');
+    container.id = OLD_ID; // ID Ataması
+    container.className = 'tm-autoscroll-cleanup-target'; // Temizlik için class
     container.style.position = 'fixed';
     container.style.top = savedTop;
     container.style.left = savedLeft;
@@ -189,7 +207,7 @@
         btn.innerHTML = html;
         btn.style.cssText = styleOverride || btnStyle;
         btn.className = "tm-btn-hover";
-        if (!styleOverride) btn.className += " tm-standard-btn"; // CSS sınıfı için işaretle
+        if (!styleOverride) btn.className += " tm-standard-btn";
         btn.title = title;
         if (colorOverride) {
             btn.style.background = colorOverride;
@@ -204,10 +222,8 @@
     btnStop.style.fontSize = '16px';
     const btnDown = createBtn('&#9660;', 'Sürekli Aşağı');
 
-
     const timerBtnContainer = document.createElement('div');
     timerBtnContainer.className = 'tm-timer-btn-container';
-
 
     const btnTimerUp = createBtn('&#9650;', 'Süreli Yukarı (Timer)', null, ' ');
     btnTimerUp.className = 'tm-timer-btn tm-btn-hover';
@@ -217,10 +233,9 @@
     timerBtnContainer.appendChild(btnTimerUp);
     timerBtnContainer.appendChild(btnTimerDown);
 
-
     const speedInput = document.createElement('input');
     speedInput.type = "number";
-    speedInput.value = "5"; // Varsayılan timer süresi 5sn
+    speedInput.value = "10";
     speedInput.min = "1";
     speedInput.className = "tm-hide-spin";
     speedInput.style.width = "42px";
@@ -234,7 +249,7 @@
     speedInput.style.fontWeight = "bold";
     speedInput.style.outline = "none";
     speedInput.style.boxShadow = "inset 0 2px 3px rgba(0,0,0,0.5)";
-    speedInput.style.marginTop = "4px"; // Timer butonlarıyla arayı aç
+    speedInput.style.marginTop = "4px";
     speedInput.addEventListener('mousedown', (e) => e.stopPropagation());
 
     const authorSign = document.createElement('div');
