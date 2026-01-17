@@ -352,7 +352,7 @@
             guideOverlay.style.animationDuration = duration + 's';
         } else if (mode === 'timer') {
             guideOverlay.classList.add('tm-mode-timer');
-            guideOverlay.style.animationDuration = '1.5s';
+            guideOverlay.style.animationDuration = '1s';
         }
 
         if (direction === 'down') {
