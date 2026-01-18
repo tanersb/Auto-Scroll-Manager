@@ -117,18 +117,35 @@
             background: linear-gradient(180deg, transparent 0%, rgba(0, 255, 255, 0.08) 50%, transparent 100%);
             background-size: 100% 200%;
             background-repeat: no-repeat;
+            background-position: 0% -100%; /* Başlangıç noktası zorunlu */
+            will-change: background-position; /* Tarayıcıya 'bu değişecek' emri */
+            transform: translateZ(0); /* GPU hızlandırmasını tetikler */
         }
         .tm-mode-timer {
             background: linear-gradient(180deg, transparent 0%, rgba(255, 140, 0, 0.4) 50%, transparent 100%);
-            background-size: 100% 50%;
+            background-size: 100% 200%; /* Timer için de boyutu artırdık */
             background-repeat: no-repeat;
+            background-position: 0% -100%;
+            will-change: background-position;
+            transform: translateZ(0);
         }
 
         @keyframes tm-flow-down { 0% { background-position: 0% -100%; } 100% { background-position: 0% 200%; } }
         @keyframes tm-flow-up { 0% { background-position: 0% 200%; } 100% { background-position: 0% -100%; } }
 
-        .tm-anim-down { animation: tm-flow-down linear infinite; }
-        .tm-anim-up { animation: tm-flow-up linear infinite; }
+
+        .tm-anim-down {
+            animation-name: tm-flow-down;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: running;
+        }
+        .tm-anim-up {
+            animation-name: tm-flow-up;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: running;
+        }
 
         .tm-target-highlight {
             outline: 2px solid rgba(76, 175, 80, 0.8) !important;
